@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sparkr</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+<style>
+:root{--a1:#fd267a;--a2:#ff7854;--bg:#f4f4f6;--surface:#fff;--text:#1f2026;--muted:#7a7d89;--line:#e7e7ec;--nope:#21d3a4;--star:#2fa8ff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111217;--surface:#1b1c23;--text:#f2f2f5;--muted:#9a9cab;--line:#2a2b34}}
+:root[data-theme="dark"]{--bg:#111217;--surface:#1b1c23;--text:#f2f2f5;--muted:#9a9cab;--line:#2a2b34}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--text);font-family:"Plus Jakarta Sans",system-ui,-apple-system,Segoe UI,sans-serif;display:flex;justify-content:center}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus-visible{outline:3px solid var(--a2);outline-offset:2px}
+.app{width:100%;max-width:460px;height:100%;display:flex;flex-direction:column;background:var(--bg)}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+.brand{display:flex;align-items:center;gap:6px;font-weight:800;font-size:24px;letter-spacing:-.5px;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand svg{width:26px;height:26px}
+.icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.icon-btn:hover{background:var(--surface)}
+main{flex:1;min-height:0;overflow-y:auto;padding:0 16px 12px}
+.stack{position:relative;height:min(62vh,560px);margin-top:4px}
+.card{position:absolute;inset:0;border-radius:20px;overflow:hidden;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.18);touch-action:none;user-select:none;display:flex;flex-direction:column;justify-content:flex-end}
+.card .avatar{position:absolute;inset:0;width:100%;height:100%}
+.card .avatar svg{width:100%;height:100%;display:block}
+.card .info{padding:60px 20px 20px;background:linear-gradient(transparent,rgba(0,0,0,.72))}
+.card h2{font-size:28px;font-weight:800}
+.card h2 span{font-weight:500;margin-left:6px}
+.card .dist{font-size:14px;opacity:.9;margin:2px 0 8px}
+.card p{font-size:15px;line-height:1.4}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tags i{font-style:normal;font-size:12px;font-weight:700;padding:5px 10px;border:1.5px solid rgba(255,255,255,.8);border-radius:99px}
+.stamp{position:absolute;top:28px;font-size:30px;font-weight:800;padding:2px 12px;border:4px solid;border-radius:10px;opacity:0;transform:rotate(-14deg)}
+.stamp.like{left:22px;color:var(--nope);border-color:var(--nope)}
+.stamp.pass{right:22px;color:var(--a1);border-color:var(--a1);transform:rotate(14deg)}
+.actions{display:flex;justify-content:center;gap:18px;padding:18px 0 6px}
+.act{width:60px;height:60px;border-radius:50%;background:var(--surface);display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.12);transition:transform .15s}
+.act:active{transform:scale(.9)}
+.act.sm{width:48px;height:48px;margin-top:6px}
+.act svg{width:28px;height:28px}
+.empty{height:100%;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px}
+.empty b{display:block;color:var(--text);font-size:20px;margin-bottom:6px}
+.empty button{margin-top:14px;padding:10px 20px;border-radius:99px;color:#fff;font-weight:700;background:linear-gradient(90deg,var(--a1),var(--a2))}
+h3{font-size:17px;margin:14px 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{aspect-ratio:3/4;border-radius:14px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;font-weight:700;position:relative;overflow:hidden}
+.tile .avatar{position:absolute;inset:0}
+.tile .avatar svg{width:100%;height:100%;display:block}
+.tile span{position:relative;z-index:1;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.55))}
+.row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface);margin-bottom:8px;width:100%;text-align:left}
+.av{width:48px;height:48px;border-radius:50%;overflow:hidden;flex:none}
+.av svg{width:100%;height:100%;display:block}
+.row small{display:block;color:var(--muted);font-size:13px}
+.me{text-align:center;padding-top:10px}
+.me .av{width:110px;height:110px;margin:0 auto 12px}
+.group-banner{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:16px;background:linear-gradient(90deg,var(--a1),var(--a2));color:#fff;margin:10px 0 4px;text-align:left}
+.group-banner .gicon{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:none}
+.group-banner .gicon svg{width:22px;height:22px}
+.group-banner b{display:block;font-size:15px}
+.group-banner small{opacity:.9;font-size:12px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+.overlay[hidden]{display:none}
+.sheet{width:100%;max-width:460px;background:var(--surface);border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow-y:auto}
+.sheet h2{font-size:21px;margin-bottom:4px}
+.sheet p.sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.field input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);font:inherit;font-size:16px}
+.field input:focus-visible{border-color:var(--a1)}
+.code-row{display:flex;gap:8px}
+.code-row input{width:100%;text-align:center;font-size:20px;font-weight:800;padding:12px 0;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
+.primary-btn{width:100%;padding:13px;border-radius:12px;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(90deg,var(--a1),var(--a2))}
+.primary-btn[disabled]{opacity:.45}
+.link-btn{display:block;width:100%;text-align:center;margin-top:12px;color:var(--muted);font-size:13px;font-weight:600}
+.sheet .back{color:var(--muted);font-weight:700;font-size:13px;margin-bottom:14px}
+.member-bar{height:10px;border-radius:99px;background:var(--star);overflow:hidden;margin:14px 0 6px}
+.member-bar-fill{height:100%;background:var(--a1)}
+.member-stats{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:18px}
+.chat{display:flex;flex-direction:column;height:100%}
+.chat-head{display:flex;align-items:center;gap:10px;padding:4px 0 12px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.chat-head .back{font-size:20px;color:var(--muted);padding:4px}
+.chat-head .av{width:38px;height:38px}
+.chat-head b{font-size:15px}
+.chat-head small{display:block;color:var(--muted);font-size:12px}
+.chat-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:6px}
+.msg{display:flex;gap:8px;align-items:flex-end;max-width:84%}
+.msg .av{width:28px;height:28px;flex:none}
+.msg .bubble-col{display:flex;flex-direction:column;gap:2px}
+.msg .who{font-size:11.5px;font-weight:700;color:var(--muted)}
+.msg .bubble{background:var(--surface);padding:9px 12px;border-radius:14px 14px 14px 4px;font-size:14.5px;line-height:1.35}
+.msg .time{font-size:10.5px;color:var(--muted);margin-top:1px}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.msg.me .bubble{background:linear-gradient(90deg,var(--a1),var(--a2));color:#fff;border-radius:14px 14px 4px 14px}
+.msg.me .bubble-col{align-items:flex-end}
+.chat-input{display:flex;gap:8px;padding-top:10px}
+.chat-input input{flex:1;padding:11px 14px;border:1.5px solid var(--line);border-radius:99px;background:var(--surface);color:var(--text);font:inherit}
+.chat-input button{width:42px;height:42px;border-radius:50%;background:linear-gradient(90deg,var(--a1),var(--a2));color:#fff;display:grid;place-items:center;flex:none}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:13px;font-weight:600;z-index:60;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.me h2{font-size:24px}
+.panel{background:var(--surface);border-radius:16px;padding:14px;margin-top:16px;text-align:left}
+.panel label{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:14px;font-weight:600}
+.panel input[type=text]{width:55%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+.panel input[type=color]{width:44px;height:32px;border:0;background:none}
+nav{display:flex;background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;font-size:11px;font-weight:700;color:var(--muted);position:relative}
+nav button svg{width:26px;height:26px}
+nav button[aria-selected=true]{color:var(--a1)}
+.dot{position:absolute;top:2px;right:30%;min-width:16px;height:16px;border-radius:8px;background:var(--a1);color:#fff;font-size:10px;display:grid;place-items:center;padding:0 4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand" id="brand"></div>
+    <button class="icon-btn" id="theme" aria-label="Switch light or dark theme">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </header>
+  <main id="main"></main>
+  <nav role="tablist" id="nav"></nav>
+</div>
+<div class="overlay" id="overlay" hidden></div>
+
+<script>
+/* ===== EDIT THIS BLOCK TO CUSTOMIZE ===== */
+const CONFIG = {
+  brand: "Sparkr",
+  you: { name: "Amani", age: 27, bio: "Coffee first, plans later." },
+  accent1: "#fd267a",
+  accent2: "#ff7854",
+  group: { name: "GYBN Chat", total: 23, women: 13, men: 10, messages: [
+    { name:"Faith", hue:340, text:"Morning everyone! Who's coming through this weekend?", time:"8:02 AM" },
+    { name:"Brian", hue:210, text:"I'm in, same spot as last time?", time:"8:05 AM" },
+    { name:"Zawadi", hue:280, text:"Yes please, that place had great nyama choma 😅", time:"8:06 AM" },
+    { name:"Aisha", hue:20, text:"Count me in too, bringing a friend if that's fine", time:"8:11 AM" },
+    { name:"Kevin", hue:150, text:"The more the merrier. Time still 4pm?", time:"8:14 AM" },
+    { name:"Faith", hue:340, text:"4pm works. I'll drop the exact location shortly", time:"8:16 AM" },
+    { name:"Omar", hue:45, text:"Can we push to 4:30? Coming from work", time:"8:20 AM" },
+    { name:"Wanjiru", hue:300, text:"4:30 is fine by me", time:"8:21 AM" },
+    { name:"Nia", hue:195, text:"First time joining a meetup, a bit nervous haha", time:"8:30 AM" },
+    { name:"Zawadi", hue:280, text:"Don't worry, everyone's super chill here 🙂", time:"8:31 AM" },
+    { name:"Brian", hue:210, text:"Yep, no pressure at all, just good conversation", time:"8:32 AM" },
+    { name:"Aisha", hue:20, text:"Welcome Nia! What do you do?", time:"8:34 AM" },
+    { name:"Nia", hue:195, text:"I'm in marketing, you?", time:"8:36 AM" },
+    { name:"Kevin", hue:150, text:"I run a small kitchen, I'll bring snacks this time", time:"8:40 AM" },
+    { name:"Omar", hue:45, text:"Kevin feeding the group as usual 🙌", time:"8:41 AM" },
+    { name:"Faith", hue:340, text:"Location dropped in the pinned message, see you all later!", time:"8:45 AM" },
+    { name:"Wanjiru", hue:300, text:"See you guys there!", time:"8:46 AM" }
+  ] },
+  profiles: [
+    { name: "Wanjiru", age: 26, city: "Nairobi", km: 3,  bio: "Sunday hikes and bad karaoke.", tags: ["Hiking","Jazz","Dogs"], hue: 340 },
+    { name: "Kevin",   age: 29, city: "Westlands", km: 5, bio: "Chef by day, film nerd by night.", tags: ["Cooking","Cinema"], hue: 210 },
+    { name: "Aisha",   age: 25, city: "Kilimani", km: 2, bio: "Looking for someone to split dessert with.", tags: ["Travel","Art","Brunch"], hue: 20 },
+    { name: "Brian",   age: 31, city: "Karen", km: 11, bio: "Runner. Reader. Terrible at chess.", tags: ["Running","Books"], hue: 150 },
+    { name: "Zawadi",  age: 28, city: "Lavington", km: 7, bio: "Photographer chasing golden hour.", tags: ["Photography","Coffee"], hue: 280 },
+    { name: "Omar",    age: 30, city: "Parklands", km: 9, bio: "Football, fusion food, good company.", tags: ["Football","Foodie","Music"], hue: 45 }
+  ]
+};
+/* ========================================= */
+
+const ICON = {
+  flame:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.5-1.6 6C8 10.3 6 12.4 6 15.5A6 6 0 0 0 12 22a6 6 0 0 0 6-6.500c0-2.300-1.100-3.900-2.200-5.200-.4 1.200-1.200 2-2.200 2.300C14.300 9 13.600 4.500 12 2z"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.800 7L3 21l2-5.600A8 8 0 1 1 21 12z"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.200-8-11a4.500 4.500 0 0 1 8-2.800A4.500 4.500 0 0 1 20 10c0 5.800-8 11-8 11z"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="#fd267a" stroke-width="3.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  like:'<svg viewBox="0 0 24 24" fill="#21d3a4"><path d="M12 21s-8-5.200-8-11a4.500 4.500 0 0 1 8-2.800A4.500 4.500 0 0 1 20 10c0 5.800-8 11-8 11z"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="#2fa8ff"><path d="M12 2l3 6.500 7 .8-5.200 4.800 1.500 7L12 17.600 5.700 21l1.500-7L2 9.300l7-.8z"/></svg>',
+  undo:'<svg viewBox="0 0 24 24" fill="none" stroke="#f5b83d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+  group:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14c2.5.3 4.5 1.8 4.5 4.5"/></svg>'
+};
+const SKINS=["#f6cba3","#e3a877","#c38858","#9c6a44","#70492f"];
+const HAIRS=["#1c1c1c","#3b2415","#6b3f1d","#a85c2b","#2a2a2a"];
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h;}
+function avatarSVG(name,hue){
+  const h=hashStr(name+hue), skin=SKINS[h%SKINS.length], hair=HAIRS[(h>>2)%HAIRS.length], style=(h>>4)%4;
+  let hairPath="";
+  if(style===0) hairPath=`<path d="M60 128 Q58 34 150 34 Q242 34 240 128 L240 108 Q150 56 60 108 Z" fill="${hair}"/>`;
+  else if(style===1) hairPath=`<path d="M48 150 Q40 28 150 28 Q260 28 252 150 L252 255 Q222 165 150 165 Q78 165 48 255 Z" fill="${hair}"/>`;
+  else if(style===2) hairPath=`<circle cx="150" cy="78" r="78" fill="${hair}"/><circle cx="150" cy="150" r="72" fill="${skin}"/>`;
+  else hairPath=`<path d="M62 125 Q60 30 150 30 Q240 30 238 125 L238 100 Q150 54 62 100Z" fill="${hair}"/><circle cx="150" cy="38" r="18" fill="${hair}"/>`;
+  return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Avatar">
+  <rect width="300" height="300" fill="hsl(${hue} 55% 90%)"/>
+  <path d="M85 300 Q85 195 150 195 Q215 195 215 300 Z" fill="hsl(${hue} 45% 40%)"/>
+  <circle cx="150" cy="150" r="72" fill="${skin}"/>
+  ${hairPath}
+  <circle cx="123" cy="152" r="6" fill="#241a14"/>
+  <circle cx="177" cy="152" r="6" fill="#241a14"/>
+  <path d="M128 182 Q150 198 172 182" stroke="#7a4332" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+const grad = h => `linear-gradient(160deg,hsl(${h} 75% 58%),hsl(${(h+50)%360} 70% 38%))`;
+const state = { tab: "discover", i: 0, liked: [], history: [], group: { step:"phone", phone:"", sentCode:"", joined:false }, openChat: null };
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function applyTheme(){
+  document.documentElement.style.setProperty("--a1", CONFIG.accent1);
+  document.documentElement.style.setProperty("--a2", CONFIG.accent2);
+  $("#brand").innerHTML = ICON.flame + esc(CONFIG.brand);
+  document.title = CONFIG.brand;
+}
+function renderNav(){
+  const tabs = [["discover","Discover",ICON.flame],["likes","Matches",ICON.heart],["messages","Messages",ICON.chat],["profile","Profile",ICON.user]];
+  $("#nav").innerHTML = tabs.map(([id,l,ic]) =>
+    `<button role="tab" data-tab="${id}" aria-selected="${state.tab===id}">${ic}${l}${id==="likes"&&state.liked.length?`<span class="dot">${state.liked.length}</span>`:""}</button>`).join("");
+}
+function render(){
+  renderNav();
+  const m = $("#main");
+  if(state.tab==="discover") return renderDiscover(m);
+  if(state.tab==="likes") m.innerHTML = state.liked.length
+    ? `<h3>${state.liked.length} ${state.liked.length===1?"match":"matches"}</h3><div class="grid">${state.liked.map(p=>`<div class="tile"><div class="avatar">${avatarSVG(p.name,p.hue)}</div><span>${esc(p.name)}, ${p.age}</span></div>`).join("")}</div>`
+    : `<div class="empty"><div><b>No matches yet</b>Swipe right on someone in Discover.</div></div>`;
+  if(state.tab==="messages"){
+    if(state.openChat==="group") return renderGroupChat(m);
+    const groupRow = state.group.joined ? `<button class="row" id="groupRow"><span class="av" style="background:linear-gradient(135deg,var(--a1),var(--a2));display:grid;place-items:center">${ICON.group}</span><span><b>${esc(CONFIG.group.name)}</b><small>${CONFIG.group.total} members · ${CONFIG.group.messages[CONFIG.group.messages.length-1].name}: ${esc(CONFIG.group.messages[CONFIG.group.messages.length-1].text)}</small></span></button>` : "";
+    m.innerHTML = (groupRow || state.liked.length) ? `<h3>Messages</h3>${groupRow}${state.liked.map(p=>`<button class="row"><span class="av">${avatarSVG(p.name,p.hue)}</span><span><b>${esc(p.name)}</b><small>Say hi to ${esc(p.name)}</small></span></button>`).join("")}`
+    : `<div class="empty"><div><b>No conversations</b>Matches you make will show up here.</div></div>`;
+    if($("#groupRow")) $("#groupRow").onclick = () => { state.openChat="group"; render(); };
+  }
+  if(state.tab==="profile") renderProfile(m);
+}
+function cardHTML(p){
+  return `<div class="card" style="background:${grad(p.hue)}"><div class="avatar">${avatarSVG(p.name,p.hue)}</div>
+  <div class="stamp like">LIKE</div><div class="stamp pass">NOPE</div>
+  <div class="info"><h2>${esc(p.name)}<span>${p.age}</span></h2><div class="dist">${esc(p.city)} · ${p.km} km away</div><p>${esc(p.bio)}</p>
+  <div class="tags">${p.tags.map(t=>`<i>${esc(t)}</i>`).join("")}</div></div></div>`;
+}
+function renderDiscover(m){
+  const p = CONFIG.profiles[state.i];
+  if(!p){ m.innerHTML = `<div class="empty"><div><b>You’re all caught up</b>Check back later for more people nearby.<br><button id="again">Start over</button></div></div>`; $("#again").onclick=()=>{state.i=0;state.liked=[];state.history=[];render()}; return; }
+  const next = CONFIG.profiles[state.i+1];
+  m.innerHTML = `<button class="group-banner" id="openGroup"><span class="gicon">${ICON.group}</span><span><b>Enter a group</b><small>${esc(CONFIG.group.name)} · ${CONFIG.group.total} members</small></span></button>
+  <div class="stack" id="stack">${next?cardHTML(next).replace('class="card"','class="card" style="transform:scale(.95)" data-back="1"').replace(/style="transform:scale\(\.95\)" data-back="1" style="/,'data-back="1" style="transform:scale(.95);'):""}${cardHTML(p).replace('class="card"','class="card" id="top"')}</div>
+  <div class="actions">
+    <button class="act sm" id="undo" aria-label="Undo last swipe">${ICON.undo}</button>
+    <button class="act" id="pass" aria-label="Pass">${ICON.x}</button>
+    <button class="act sm" id="sup" aria-label="Super like">${ICON.star}</button>
+    <button class="act" id="yes" aria-label="Like">${ICON.like}</button>
+  </div>`;
+  const top = $("#top");
+  let sx=0, dx=0, drag=false;
+  const stamps = () => { top.querySelector(".like").style.opacity = Math.max(0,dx/100); top.querySelector(".pass").style.opacity = Math.max(0,-dx/100); };
+  top.onpointerdown = e => { drag=true; sx=e.clientX; top.setPointerCapture(e.pointerId); top.style.transition="none"; };
+  top.onpointermove = e => { if(!drag) return; dx=e.clientX-sx; top.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`; stamps(); };
+  top.onpointerup = () => { if(!drag) return; drag=false; if(Math.abs(dx)>100) swipe(dx>0); else { top.style.transition="transform .25s"; top.style.transform=""; dx=0; stamps(); } };
+  $("#pass").onclick = () => swipe(false);
+  $("#yes").onclick = () => swipe(true);
+  $("#sup").onclick = () => swipe(true);
+  $("#undo").onclick = undo;
+  $("#openGroup").onclick = () => { state.group.step = state.group.joined ? "joined" : "phone"; openGroup(); };
+}
+function renderGroupChat(m){
+  const g = CONFIG.group;
+  m.innerHTML = `<div class="chat">
+    <div class="chat-head"><button class="back" id="chatBack" aria-label="Back to messages">&larr;</button>
+      <span class="av" style="background:linear-gradient(135deg,var(--a1),var(--a2));display:grid;place-items:center">${ICON.group}</span>
+      <span><b>${esc(g.name)}</b><small>${g.total} members</small></span></div>
+    <div class="chat-body" id="chatBody">${g.messages.map(msgHTML).join("")}</div>
+    <div class="chat-input"><input id="chatInput" type="text" placeholder="Message ${esc(g.name)}" maxlength="140">
+      <button id="chatSend" aria-label="Send">${ICON.flame}</button></div>
+  </div>`;
+  const body = $("#chatBody"); body.scrollTop = body.scrollHeight;
+  $("#chatBack").onclick = () => { state.openChat = null; render(); };
+  const send = () => {
+    const inp = $("#chatInput"); const v = inp.value.trim(); if(!v) return;
+    g.messages.push({ name: CONFIG.you.name, hue: 0, text: v, time: "now", me: true });
+    inp.value = "";
+    body.insertAdjacentHTML("beforeend", msgHTML(g.messages[g.messages.length-1]));
+    body.scrollTop = body.scrollHeight;
+  };
+  $("#chatSend").onclick = send;
+  $("#chatInput").onkeydown = e => { if(e.key==="Enter") send(); };
+}
+function msgHTML(msg){
+  if(msg.me) return `<div class="msg me"><div class="bubble-col"><div class="bubble">${esc(msg.text)}</div><span class="time">${esc(msg.time)}</span></div></div>`;
+  return `<div class="msg"><span class="av">${avatarSVG(msg.name,msg.hue)}</span><div class="bubble-col"><span class="who">${esc(msg.name)}</span><div class="bubble">${esc(msg.text)}</div><span class="time">${esc(msg.time)}</span></div></div>`;
+}
+function swipe(like){
+  const top = $("#top"); if(!top) return;
+  top.style.transition="transform .3s, opacity .3s";
+  top.style.transform=`translateX(${like?500:-500}px) rotate(${like?25:-25}deg)`; top.style.opacity=0;
+  const p = CONFIG.profiles[state.i];
+  state.history.push({p, like});
+  if(like) state.liked.push(p);
+  state.i++;
+  setTimeout(render, 260);
+}
+function undo(){
+  const h = state.history.pop(); if(!h) return;
+  state.i--; if(h.like) state.liked.pop(); render();
+}
+function renderProfile(m){
+  const u = CONFIG.you;
+  m.innerHTML = `<div class="me"><div class="av">${avatarSVG(u.name||"you",0)}</div>
+  <h2>${esc(u.name)}, ${u.age}</h2><p style="color:var(--muted);margin-top:4px">${esc(u.bio)}</p></div>
+  <div class="panel"><b>Customize</b>
+    <label>App name<input type="text" id="c-brand" value="${esc(CONFIG.brand)}" maxlength="16"></label>
+    <label>Your name<input type="text" id="c-name" value="${esc(u.name)}" maxlength="20"></label>
+    <label>Your bio<input type="text" id="c-bio" value="${esc(u.bio)}" maxlength="60"></label>
+    <label>Accent start<input type="color" id="c-a1" value="${CONFIG.accent1}"></label>
+    <label>Accent end<input type="color" id="c-a2" value="${CONFIG.accent2}"></label>
+  </div>`;
+  const bind = (id, fn) => $(id).oninput = e => { fn(e.target.value); applyTheme(); const h=document.querySelector(".me"); h.querySelector("h2").textContent=`${CONFIG.you.name}, ${CONFIG.you.age}`; h.querySelector("p").textContent=CONFIG.you.bio; h.querySelector(".av").innerHTML=avatarSVG(CONFIG.you.name||"you",0); };
+  bind("#c-brand", v=>CONFIG.brand=v||"Sparkr");
+  bind("#c-name", v=>CONFIG.you.name=v);
+  bind("#c-bio", v=>CONFIG.you.bio=v);
+  bind("#c-a1", v=>CONFIG.accent1=v);
+  bind("#c-a2", v=>CONFIG.accent2=v);
+}
+function toast(msg){
+  const t = document.createElement("div"); t.className="toast"; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(), 3200);
+}
+function closeGroup(){ $("#overlay").hidden = true; $("#overlay").innerHTML = ""; }
+function openGroup(){
+  const ov = $("#overlay"); ov.hidden = false;
+  const g = state.group;
+  if(g.joined || g.step==="joined"){
+    const wPct = Math.round(CONFIG.group.women / CONFIG.group.total * 100);
+    ov.innerHTML = `<div class="sheet"><h2>You're in 🎉</h2><p class="sub">You're now part of ${esc(CONFIG.group.name)} — ${CONFIG.group.total} members.</p>
+    <div class="member-bar"><div class="member-bar-fill" style="width:${wPct}%"></div></div>
+    <div class="member-stats"><span>${CONFIG.group.women} women</span><span>${CONFIG.group.men} men</span></div>
+    <button class="primary-btn" id="goChat">Open chat</button></div>`;
+    $("#goChat").onclick = () => { closeGroup(); state.tab="messages"; state.openChat="group"; render(); };
+    return;
+  }
+  if(g.step==="phone"){
+    ov.innerHTML = `<div class="sheet">
+      <h2>Enter a group</h2>
+      <p class="sub">We'll text a 6-digit code to verify your number before you join ${esc(CONFIG.group.name)} (${CONFIG.group.total} members).</p>
+      <div class="field"><label for="g-phone">Phone number</label><input id="g-phone" type="tel" inputmode="tel" placeholder="+254 7XX XXX XXX" value="${esc(g.phone)}" autofocus></div>
+      <button class="primary-btn" id="sendCode">Send code</button>
+    </div>`;
+    const input = $("#g-phone"), btn = $("#sendCode");
+    btn.onclick = () => {
+      const v = input.value.trim();
+      if(v.replace(/\D/g,"").length < 7){ input.focus(); toast("Enter a valid phone number"); return; }
+      g.phone = v;
+      g.step = "code";
+      openGroup();
+      toast("Code sent");
+    };
+  } else if(g.step==="code"){
+    ov.innerHTML = `<div class="sheet">
+      <button class="back" id="g-back">&larr; Back</button>
+      <h2>Enter the code</h2>
+      <p class="sub">Sent to ${esc(g.phone)}</p>
+      <div class="field"><label for="g-code">6-digit code</label><input id="g-code" type="text" inputmode="numeric" maxlength="6" placeholder="••••••" autofocus></div>
+      <button class="primary-btn" id="joinBtn">Join group</button>
+      <button class="link-btn" id="resend">Resend code</button>
+    </div>`;
+    $("#g-back").onclick = () => { g.step="phone"; openGroup(); };
+    $("#resend").onclick = () => toast("Code sent");
+    $("#joinBtn").onclick = () => {
+      const code = $("#g-code").value.trim();
+      if(!/^\d{6}$/.test(code)){ toast("Enter the 6-digit code"); return; }
+      g.joined = true; g.step = "joined";
+      openGroup();
+    };
+  }
+}
+$("#overlay").addEventListener("click", e => { if(e.target.id==="overlay") closeGroup(); });
+$("#nav").onclick = e => { const b = e.target.closest("[data-tab]"); if(b){ state.tab=b.dataset.tab; render(); } };
+$("#theme").onclick = () => {
+  const r = document.documentElement;
+  const dark = r.dataset.theme ? r.dataset.theme==="dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  r.dataset.theme = dark ? "light" : "dark";
+};
+applyTheme(); render();
+</script>
+</body>
+</html>
